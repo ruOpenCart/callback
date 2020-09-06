@@ -20,7 +20,7 @@ $_['entry_status']                   = 'Status';
 // Text
 $_['text_extension']                 = 'Extensions';
 $_['text_success']                   = 'Success: You have modified callback module!';
-$_['text_edit']                      = 'Edit CallBack Module';
+$_['text_settings']                  = 'Setting a callback module';
 $_['text_name']                      = 'Extension name';
 $_['text_version']                   = 'Extension version';
 $_['text_author']                    = 'Extension author';
