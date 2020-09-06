@@ -12,7 +12,7 @@ class ControllerExtensionModuleOCNCallBack extends Controller {
 	}
 
 	public function index() {
-		$this->load->language('extension/module/ocn_callback');
+		$this->load->language('extension/module/ocn_callback/ocn_callback');
 		$this->document->setTitle($this->language->get('heading_title'));
 		
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validateForm()) {
@@ -55,17 +55,16 @@ class ControllerExtensionModuleOCNCallBack extends Controller {
 		$data['url_action'] = $this->url->link('extension/module/ocn_callback', 'user_token=' . $this->session->data['user_token'], true);
 		$data['url_cancel'] = $this->url->link('marketplace/extension', 'user_token=' . $this->session->data['user_token'] . '&type=module', true);
 		
-		// Data form
-		$data['module_ocn_callback_status'] = isset($this->request->post['module_ocn_callback_status'])
-			? $this->request->post['module_ocn_callback_status']
-			: $this->config->get('module_ocn_callback_status');
-		
 		// Templates
+		// Tabs
+		$data['data_tab_info'] = $this->load->controller('extension/module/ocn_callback/ocn_callback_tab_info');
+		$data['data_tab_general'] = $this->load->controller('extension/module/ocn_callback/ocn_callback_tab_general');
+		// Main
 		$data['header'] = $this->load->controller('common/header');
 		$data['column_left'] = $this->load->controller('common/column_left');
 		$data['footer'] = $this->load->controller('common/footer');
 		
-		$this->response->setOutput($this->load->view('extension/module/ocn_callback', $data));
+		$this->response->setOutput($this->load->view('extension/module/ocn_callback/ocn_callback', $data));
 	}
 	
 	protected function validateForm() {
