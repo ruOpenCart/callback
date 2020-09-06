@@ -1,7 +1,15 @@
 <?php
 class ControllerExtensionModuleOCNCallBack extends Controller {
 	private $errors = [];
-
+	private $user_token;
+	
+	public function __construct($registry)
+	{
+		parent::__construct($registry);
+		
+		$this->user_token = 'user_token=' . $this->session->data['user_token'];
+	}
+	
 	public function install() {
 		$this->createTables();
 		$this->fillTables();
@@ -15,7 +23,7 @@ class ControllerExtensionModuleOCNCallBack extends Controller {
 		$this->load->language('extension/module/ocn_callback/ocn_callback');
 		$this->document->setTitle($this->language->get('heading_title'));
 		
-		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validateForm()) {
+		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validateData()) {
 			$this->load->model('setting/setting');
 			$this->model_setting_setting->editSetting('module_ocn_callback', $this->request->post);
 			
@@ -23,17 +31,17 @@ class ControllerExtensionModuleOCNCallBack extends Controller {
 			
 			// If button apply
 			if (isset($this->request->post['apply']) && $this->request->post['apply']) {
-				$this->response->redirect($this->url->link('extension/module/ocn_callback', 'user_token=' . $this->session->data['user_token'], true));
+				$this->response->redirect($this->url->link('extension/module/ocn_callback', $this->user_token, true));
 			}
 			
 			// Go to list modules
-			$this->response->redirect($this->url->link('marketplace/extension', 'user_token=' . $this->session->data['user_token'] . '&type=module', true));
+			$this->response->redirect($this->url->link('marketplace/extension', $this->user_token . '&type=module', true));
 		}
 		
-		$this->getForm();
+		$this->getData();
 	}
 	
-	protected function getForm() {
+	protected function getData() {
 		$data['user_token'] = $this->session->data['user_token'];
 		
 		// Success
@@ -52,8 +60,8 @@ class ControllerExtensionModuleOCNCallBack extends Controller {
 		$data['breadcrumbs'] = $this->generateBreadcrumbs('extension/module/ocn_callback');
 		
 		// Buttons
-		$data['url_action'] = $this->url->link('extension/module/ocn_callback', 'user_token=' . $this->session->data['user_token'], true);
-		$data['url_cancel'] = $this->url->link('marketplace/extension', 'user_token=' . $this->session->data['user_token'] . '&type=module', true);
+		$data['url_action'] = $this->url->link('extension/module/ocn_callback', $this->user_token, true);
+		$data['url_cancel'] = $this->url->link('marketplace/extension', $this->user_token . '&type=module', true);
 		
 		// Templates
 		// Tabs
@@ -67,7 +75,7 @@ class ControllerExtensionModuleOCNCallBack extends Controller {
 		$this->response->setOutput($this->load->view('extension/module/ocn_callback/ocn_callback', $data));
 	}
 	
-	protected function validateForm() {
+	protected function validateData() {
 		if (!$this->user->hasPermission('modify', 'extension/module/ocn_callback')) {
 			$this->errors['permission'] = $this->language->get('error_permission');
 		}
@@ -83,15 +91,15 @@ class ControllerExtensionModuleOCNCallBack extends Controller {
 		return [
 			[
 				'text' => $this->language->get('text_home'),
-				'href' => $this->url->link('common/dashboard', 'user_token=' . $this->session->data['user_token'], true)
+				'href' => $this->url->link('common/dashboard', $this->user_token, true)
 			],
 			[
 				'text' => $this->language->get('text_extension'),
-				'href' => $this->url->link('marketplace/extension', 'user_token=' . $this->session->data['user_token'] . '&type=module', true)
+				'href' => $this->url->link('marketplace/extension', $this->user_token . '&type=module', true)
 			],
 			[
 				'text' => $this->language->get('heading_title'),
-				'href' => $this->url->link($module, 'user_token=' . $this->session->data['user_token'], true)
+				'href' => $this->url->link($module, $this->user_token, true)
 			]
 		];
 	}
