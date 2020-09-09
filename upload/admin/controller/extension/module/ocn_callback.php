@@ -2,6 +2,7 @@
 class ControllerExtensionModuleOCNCallBack extends Controller {
 	private $errors = [];
 	private $user_token;
+	private $version = '3.0.0.0';
 	
 	public function __construct($registry)
 	{
@@ -42,6 +43,7 @@ class ControllerExtensionModuleOCNCallBack extends Controller {
 	}
 	
 	protected function getData() {
+		$data['data_version'] = $this->version;
 		$data['user_token'] = $this->session->data['user_token'];
 		
 		// Success
@@ -65,7 +67,7 @@ class ControllerExtensionModuleOCNCallBack extends Controller {
 		
 		// Templates
 		// Tabs
-		$data['data_tab_info'] = $this->load->controller('extension/module/ocn_callback/ocn_callback_tab_info');
+		$data['data_tab_info'] = $this->load->controller('extension/module/ocn_callback/ocn_callback_tab_info', ['data_version' => $this->version]);
 		$data['data_tab_general'] = $this->load->controller('extension/module/ocn_callback/ocn_callback_tab_general');
 		// Main
 		$data['header'] = $this->load->controller('common/header');
