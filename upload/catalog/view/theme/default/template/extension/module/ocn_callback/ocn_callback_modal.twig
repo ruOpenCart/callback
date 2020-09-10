@@ -1,0 +1,21 @@
+<div class="modal fade" id="ocn-callback-modal" tabindex="-1" role="dialog" aria-labelledby="ocn-callback-modal">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">{{ modal_title }}</h4>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="form-group">
+            <label for="ocn-callback-message" class="control-label">{{ label_message }}</label>
+            <textarea class="form-control" id="ocn-callback-message"></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{ button_close }}</button>
+        <button type="button" class="btn btn-primary" id="ocn-callback-store">{{ button_send }}</button>
+      </div>
+    </div>
+  </div>
+</div>

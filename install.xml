@@ -6,4 +6,25 @@
   <author>Hkr</author>
   <link>https://forum.opencart.name/resources/</link>
   <date>05.09.2020</date>
+  
+  <file path="catalog/controller/common/footer.php">
+    <operation>
+      <search trim="true"><![CDATA[return $this->load->view('common/footer', $data);]]></search>
+      <add position="before" trim="true"><![CDATA[
+        $data['ocn_callback_status'] = $this->config->get('module_ocn_callback_status');
+        $data['ocn_callback_data'] = $data['ocn_callback_status'] ? $this->load->controller('extension/module/ocn_callback') : '';
+      ]]></add>
+    </operation>
+  </file>
+  <file path="catalog/view/theme/default/template/common/footer.twig">
+    <operation>
+      <search trim="true"><![CDATA[</footer>]]></search>
+      <add position="after" trim="true"><![CDATA[
+        {% if ocn_callback_status %}
+          {{ ocn_callback_data }}
+        {% endif %}
+      ]]></add>
+    </operation>
+  </file>
+  
 </modification>

@@ -1,0 +1,22 @@
+a.ocn-callback-show {
+    position: fixed;
+    opacity: 0.5;
+    text-align: center;
+    z-index: 999;
+    background-color: #23a1d1;
+    color: #ffffff;
+    width: 32px;
+    height: 32px;
+    line-height: 44px;
+    right: 10px;
+    bottom: 10px;
+    border-radius: 5px;
+    transition: all 0.3s ease-in-out;
+}
+a.ocn-callback-show > .fa-phone {
+    font-size: 24px;
+}
+a.ocn-callback-show:hover,
+a.ocn-callback-show:focus {
+    opacity: 0.9;
+}
