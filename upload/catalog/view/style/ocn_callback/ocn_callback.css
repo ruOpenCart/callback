@@ -20,3 +20,11 @@ a.ocn-callback-show:hover,
 a.ocn-callback-show:focus {
     opacity: 0.9;
 }
+
+.ocn-modal-title {
+    font-size: 24px;
+}
+
+.fa.fa-phone.fa-2x {
+    font-size: 1em;
+}
