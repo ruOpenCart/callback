@@ -1,8 +1,6 @@
 <?php
 class ControllerExtensionModuleOCNCallback extends Controller {
 	private $user_token;
-	private $errors = [];
-	private $warning;
 	
 	public function __construct($registry)
 	{
@@ -17,38 +15,44 @@ class ControllerExtensionModuleOCNCallback extends Controller {
 		
 		$this->load->language('extension/module/ocn_callback/ocn_callback');
 		
-		
-		$data['view_modal'] = $this->load->controller('extension/module/ocn_callback/ocn_callback_modal');
+		$data['view_modal'] = $this->getViewModal();
+		$data['view_alert'] = $this->getViewAlert();
 
 		return $this->load->view('extension/module/ocn_callback/ocn_callback', $data);
 	}
 
 	public function store() {
-//		$this->response->setOutput($this->load->view('extension/module/ocn_callback/ocn_callback_success'));
 		$this->load->language('extension/module/ocn_callback/ocn_callback');
-//		$this->load->model('setting/modification');
+		$this->load->model('extension/module/ocn_callback');
 		
-		if ($this->validateForm()) {
-//			$this->model_catalog_review->editReview($this->request->get['review_id'], $this->request->post);
-			$json['success'] = $this->language->get('text_success');
-		} else {
-			$json['warning'] = $this->warning;
-			$json['errors'] = $this->errors;
-		}
+		$callbackData = [
+			'store_id' => $this->config->get('config_store_id'),
+			'language_id' => $this->config->get('config_language_id'),
+			'url' => htmlspecialchars($this->request->post['url'], ENT_QUOTES),
+			'name' => htmlspecialchars($this->request->post['name'], ENT_QUOTES),
+			'email' => htmlspecialchars($this->request->post['email'], ENT_QUOTES),
+			'phone' => htmlspecialchars($this->request->post['phone'], ENT_QUOTES),
+			'comment' => htmlspecialchars($this->request->post['comment'], ENT_QUOTES)
+		];
+		
+		$json['callback_id'] = $this->model_extension_module_ocn_callback->addCallback($callbackData);
+		$json['success'] = 'success';
 		
 		$this->response->addHeader('Content-Type: application/json; charset=utf-8');
 		$this->response->setOutput(json_encode($json));
 	}
 	
-	private function validateForm() {
-		if (!isset($this->request->post['phone']) || empty($this->request->post['phone'])) {
-			$this->errors['phone'] = $this->language->get('error_phone');
-		}
+	private function getViewModal()
+	{
+		$this->load->language('extension/module/ocn_callback/ocn_callback_modal');
+		$data['url_store'] = $this->url->link('extension/module/ocn_callback/store', $this->user_token, true);
 		
-		if (count($this->errors) > 0) {
-			$this->warning = $this->language->get('error_warning');
-		}
+		return $this->load->view('extension/module/ocn_callback/ocn_callback_modal', $data);
+	}
+	private function getViewAlert()
+	{
+		$this->load->language('extension/module/ocn_callback/ocn_callback_alert');
 		
-		return !$this->errors;
+		return $this->load->view('extension/module/ocn_callback/ocn_callback_alert');
 	}
 }

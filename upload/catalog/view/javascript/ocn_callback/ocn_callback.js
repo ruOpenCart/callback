@@ -14,13 +14,10 @@ $(document).ready(function() {
 
     $('#ocn-callback-store').on('click', function(e) {
         if (validateForm()) {
-            console.log('validate');
             storeCallback();
-        } else {
-            console.log('errors');
+            modal.modal('hide');
+            $('#ocn-callback-alert').modal('show');
         }
-
-        // modal.modal('hide');
     });
 
     function storeCallback() {
