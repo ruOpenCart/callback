@@ -49,6 +49,7 @@ class ControllerExtensionModuleOCNCallback extends Controller {
 		
 		return $this->load->view('extension/module/ocn_callback/ocn_callback_modal', $data);
 	}
+	
 	private function getViewAlert()
 	{
 		$this->load->language('extension/module/ocn_callback/ocn_callback_alert');
