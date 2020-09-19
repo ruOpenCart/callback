@@ -19,9 +19,66 @@ class ControllerExtensionModuleOCNCallBack extends Controller {
 	public function uninstall() {
 		$this->removeTables();
 	}
+	
+	public function list()
+	{
+		$this->load->language('extension/module/ocn_callback/ocn_callback_list');
+		$this->document->setTitle($this->language->get('heading_title'));
+		
+		$this->getList();
+	}
+	
+	protected function getList() {
+		$data['data_version'] = $this->version;
+		$data['user_token'] = $this->session->data['user_token'];
+		
+		// Success
+		if (isset($this->session->data['success'])) {
+			$data['success'] = $this->session->data['success'];
+			unset($this->session->data['success']);
+		} else {
+			$data['success'] = '';
+		}
+		
+		// Errors
+		$data['errors'] = $this->errors;
+		$data['warning'] = $this->warning;
+		
+		// Breadcrumbs
+		$data['breadcrumbs'] = $this->generateBreadcrumbs('extension/module/ocn_callback/list');
+		
+		// Buttons
+		$data['url_settings'] = $this->url->link('extension/module/ocn_callback', $this->user_token, true);
+		$data['url_cancel'] = $this->url->link('marketplace/extension', $this->user_token . '&type=module', true);
+		$data['url_update'] = $this->url->link('extension/module/ocn_callback/items', $this->user_token, true);
+		
+		// Data
+		$data['view_items'] = $this->getItems();
+		
+		// Main
+		$data['header'] = $this->load->controller('common/header');
+		$data['column_left'] = $this->load->controller('common/column_left');
+		$data['footer'] = $this->load->controller('common/footer');
+		
+		$this->response->setOutput($this->load->view('extension/module/ocn_callback/ocn_callback_list', $data));
+	}
+	
+	private function getItems()
+	{
+		$this->load->language('extension/module/ocn_callback/ocn_callback_list_items');
+		$this->load->model('extension/module/ocn_callback');
+		$data['list'] = $this->model_extension_module_ocn_callback->list();
+		
+		return $this->load->view('extension/module/ocn_callback/ocn_callback_list_items', $data);
+	}
+	
+	public function items()
+	{
+		$this->response->setOutput($this->getItems());
+	}
 
 	public function index() {
-		$this->load->language('extension/module/ocn_callback/ocn_callback');
+		$this->load->language('extension/module/ocn_callback/ocn_callback_settings');
 		$this->document->setTitle($this->language->get('heading_title'));
 		
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validateData()) {
@@ -63,6 +120,7 @@ class ControllerExtensionModuleOCNCallBack extends Controller {
 		
 		// Buttons
 		$data['url_action'] = $this->url->link('extension/module/ocn_callback', $this->user_token, true);
+		$data['url_list'] = $this->url->link('extension/module/ocn_callback/list', $this->user_token, true);
 		$data['url_cancel'] = $this->url->link('marketplace/extension', $this->user_token . '&type=module', true);
 		
 		// Templates
@@ -74,7 +132,7 @@ class ControllerExtensionModuleOCNCallBack extends Controller {
 		$data['column_left'] = $this->load->controller('common/column_left');
 		$data['footer'] = $this->load->controller('common/footer');
 		
-		$this->response->setOutput($this->load->view('extension/module/ocn_callback/ocn_callback', $data));
+		$this->response->setOutput($this->load->view('extension/module/ocn_callback/ocn_callback_settings', $data));
 	}
 	
 	protected function validateData() {
