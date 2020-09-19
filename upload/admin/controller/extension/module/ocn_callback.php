@@ -91,9 +91,9 @@ class ControllerExtensionModuleOCNCallBack extends Controller {
 		if ($status) {
 			$data['status'] = 'success';
 			$data['title'] = $this->language->get('title_success');
-			$data['text'] = $this->language->get('error_delete');
+			$data['text'] = $this->language->get('success_delete');
 		} else {
-			$data['status'] = 'error';
+			$data['status'] = 'danger';
 			$data['title'] = $this->language->get('title_error');
 			$data['text'] = $this->language->get('error_delete');
 		}
