@@ -42,7 +42,7 @@
             <h3 class="panel-title"><i class="fa fa-list"></i> {{ text_list }}</h3>
           </div>
           <div class="panel-body">
-            <form action="{{ url_action }}" method="post" enctype="multipart/form-data" id="form-callback-list" class="form-horizontal">
+            <form action="{{ url_action }}" method="post" enctype="multipart/form-data" id="form-callback-list" class="form-horizontal" data-get="{{ url_get }}">
               <div class="table-responsive">
                 <table class="table table-bordered table-hover">
                   <thead>
@@ -94,6 +94,7 @@
     </div>
   </div>
 </div>
+{{ view_modal }}
 {{ footer }}
 <script>
     $(document).ready(function() {
@@ -107,6 +108,7 @@
         $('#list-items').on('click', 'button.btn-danger', function() {
             const id = $(this).attr('data-id');
             if (confirm($('#button-remove').attr('data-confirm'))) {
+                $('input[name*="selected"]').prop('checked', false);
                 $('input[name*="selected"][value="' + id + '"]').prop('checked', true);
                 $('#list-items button').prop('disabled', true);
                 removeItems();
@@ -129,6 +131,91 @@
                 showAlert($('#callback-panel'), 'warning', warning, error);
             }
         });
+
+        // Modal
+        $('#list-items').on('click', 'button.btn-warning', function() {
+            const id = $(this).attr('data-id');
+            $('#callback-modal').modal('show');
+            $('#form-callback-modal').find('.form-control').prop('disabled', true);
+            $('#form-callback-modal').find('.btn').prop('disabled', true);
+            $('#form-callback-modal').find('.btn-default>i.fa').removeClass('fa-times').addClass('fa-spinner fa-pulse');
+            $('#form-callback-modal').find('.btn-primary>i.fa').removeClass('fa-floppy-o').addClass('fa-spinner fa-pulse');
+            getById(id);
+        });
+        $('#callback-modal').on('hide.bs.modal', function (e) {
+            document.getElementById('form-callback-modal').reset();
+        })
+
+        $('#form-callback-modal').on('click', 'button.btn-primary', update);
+
+
+        function update() {
+            const url = $('#form-callback-modal').attr('action');
+
+            $('#form-callback-modal').find('.form-control').prop('readonly', true);
+            $('#form-callback-modal').find('.btn').prop('disabled', true);
+            $('#form-callback-modal').find('.btn-default>i.fa').removeClass('fa-times').addClass('fa-spinner fa-pulse');
+            $('#form-callback-modal').find('.btn-primary>i.fa').removeClass('fa-floppy-o').addClass('fa-spinner fa-pulse');
+
+            $.ajax({
+                type: 'post',
+                url: url,
+                data: $('#form-callback-modal').serialize(),
+                dataType: 'json',
+                success: function(response) {
+                    $('#callback-modal').modal('hide');
+                    updateItems();
+                    showAlert($('#callback-panel'), response.status, response.title, response.text);
+                },
+                error: function(xhr, ajaxOptions, thrownError) {
+                    alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+                },
+                complete: function() {
+                    $('#form-callback-modal').find('.form-control').prop('readonly', false);
+                    $('#form-callback-modal').find('.btn').prop('disabled', false);
+                    $('#form-callback-modal').find('.btn-default>i.fa').removeClass('fa-spinner fa-pulse').addClass('fa-times');
+                    $('#form-callback-modal').find('.btn-primary>i.fa').removeClass('fa-spinner fa-pulse').addClass('fa-floppy-o');
+                }
+            });
+        }
+
+        function getById(id) {
+            const url = $('#form-callback-list').attr('data-get');
+            $.ajax({
+                type: 'get',
+                url: url,
+                data: { callback_id: id },
+                dataType: 'json',
+                success: function(response) {
+                    fillFormModal(response.callback, response.statuses);
+                },
+                error: function(xhr, ajaxOptions, thrownError) {
+                    alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+                },
+                complete: function() {
+                    $('#form-callback-modal').find('.form-control').prop('disabled', false);
+                    $('#form-callback-modal').find('.btn').prop('disabled', false);
+                    $('#form-callback-modal').find('.btn-default>i.fa').removeClass('fa-spinner fa-pulse').addClass('fa-times');
+                    $('#form-callback-modal').find('.btn-primary>i.fa').removeClass('fa-spinner fa-pulse').addClass('fa-floppy-o');
+                }
+            });
+        }
+
+        function fillFormModal(callback, statuses) {
+            $('#form-callback-id').val(callback.callback_id);
+            $('#form-callback-name').val(callback.name);
+            $('#form-callback-phone').val(callback.phone);
+            $('#form-callback-email').val(callback.email);
+            $('#form-callback-comment').val(callback.comment);
+            $('#form-callback-status').html('');
+            $.each(statuses, function (i, status) {
+                $('#form-callback-status').append($('<option>', {
+                    value: status.callback_status_id,
+                    text: status.name,
+                    selected: status.callback_status_id == callback.callback_status_id ? true : false
+                }));
+            });
+        }
 
         // Update items
         function updateItems() {

@@ -52,9 +52,11 @@ class ControllerExtensionModuleOCNCallBack extends Controller {
 		$data['url_cancel'] = $this->url->link('marketplace/extension', $this->user_token . '&type=module', true);
 		$data['url_update'] = $this->url->link('extension/module/ocn_callback/items', $this->user_token, true);
 		$data['url_remove'] = $this->url->link('extension/module/ocn_callback/remove', $this->user_token, true);
+		$data['url_get'] = $this->url->link('extension/module/ocn_callback/get', $this->user_token, true);
 		
 		// Data
-		$data['view_items'] = $this->getItems();
+		$data['view_items'] = $this->viewListItems();
+		$data['view_modal'] = $this->viewListModal();
 		
 		// Main
 		$data['header'] = $this->load->controller('common/header');
@@ -64,7 +66,16 @@ class ControllerExtensionModuleOCNCallBack extends Controller {
 		$this->response->setOutput($this->load->view('extension/module/ocn_callback/ocn_callback_list', $data));
 	}
 	
-	private function getItems()
+	private function viewListModal()
+	{
+		$this->load->language('extension/module/ocn_callback/ocn_callback_list_modal');
+		
+		$data['url_action'] = $this->url->link('extension/module/ocn_callback/update', $this->user_token, true);
+		
+		return $this->load->view('extension/module/ocn_callback/ocn_callback_list_modal', $data);
+	}
+	
+	private function viewListItems()
 	{
 		$this->load->language('extension/module/ocn_callback/ocn_callback_list_items');
 		$this->load->model('extension/module/ocn_callback');
@@ -75,7 +86,7 @@ class ControllerExtensionModuleOCNCallBack extends Controller {
 	
 	public function items()
 	{
-		$this->response->setOutput($this->getItems());
+		$this->response->setOutput($this->viewListItems());
 	}
 	
 	public function remove()
@@ -96,6 +107,37 @@ class ControllerExtensionModuleOCNCallBack extends Controller {
 			$data['status'] = 'danger';
 			$data['title'] = $this->language->get('title_error');
 			$data['text'] = $this->language->get('error_delete');
+		}
+		
+		$this->response->addHeader('Content-Type: application/json; charset=utf-8');
+		$this->response->setOutput(json_encode($data));
+	}
+	
+	public function get()
+	{
+		$this->load->model('extension/module/ocn_callback');
+		
+		$data['callback'] = $this->model_extension_module_ocn_callback->getById($this->request->get['callback_id']);
+		$data['statuses'] = $this->model_extension_module_ocn_callback->statuses();
+		
+		$this->response->addHeader('Content-Type: application/json; charset=utf-8');
+		$this->response->setOutput(json_encode($data));
+	}
+	
+	public function update()
+	{
+		$this->load->language('extension/module/ocn_callback/ocn_callback_list_modal');
+		$this->load->model('extension/module/ocn_callback');
+		$status = $this->model_extension_module_ocn_callback->update($this->request->post);
+
+		if ($status) {
+			$data['status'] = 'success';
+			$data['title'] = $this->language->get('title_success');
+			$data['text'] = $this->language->get('success_update');
+		} else {
+			$data['status'] = 'danger';
+			$data['title'] = $this->language->get('title_error');
+			$data['text'] = $this->language->get('error_update');
 		}
 		
 		$this->response->addHeader('Content-Type: application/json; charset=utf-8');
