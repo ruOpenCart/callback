@@ -1,9 +1,10 @@
 <?php
 // Heading
-$_['heading_title']    = '[OCN] Обратный звонок';
+$_['heading_title']    = '[OCN] Обратный звонок (Настройки)';
 
 // Button
 $_['button_apply']     = 'Применить';
+$_['button_list']      = 'Список';
 
 // Tab
 $_['tab_general']      = 'Общие';

@@ -1,9 +1,10 @@
 <?php
 // Heading
-$_['heading_title']    = '[OCN] CallBack';
+$_['heading_title']    = '[OCN] CallBack (Settings)';
 
 // Button
 $_['button_apply']     = 'Apply';
+$_['button_list']      = 'List';
 
 // Tab
 $_['tab_general']      = 'General';
