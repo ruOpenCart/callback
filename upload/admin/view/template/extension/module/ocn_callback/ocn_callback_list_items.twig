@@ -1,0 +1,21 @@
+{% if list %}
+  {% for callback in list %}
+    <tr>
+      <td class="text-center">
+        <input type="checkbox" name="selected[]" value="{{ callback.callback_id }}" {% if callback.callback_id in selected %}checked="checked"{% endif %}>
+      </td>
+      <td>{{ callback.callback_id }}</td>
+      <td>{{ callback.name }}</td>
+      <td><a href="mailto:{{ callback.email }}">{{ callback.email }}</a></td>
+      <td><a href="tel:{{ callback.phone }}">{{ callback.phone }}</a></td>
+      <td><a href="{{ callback.url }}" class="btn btn-link" target="_blank" data-toggle="tooltip" title="{{ callback.url }}">{{ text_go_to }} <i class="fa fa-external-link"></i></a></td>
+      <td>{{ callback.comment }}</td>
+      <td>{{ callback.status_name }}</td>
+      <td class="text-right">buttons</td>
+    </tr>
+  {% endfor %}
+{% else %}
+  <tr>
+    <td class="text-center" colspan="4">{{ text_no_results }}</td>
+  </tr>
+{% endif %}
