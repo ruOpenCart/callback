@@ -11,7 +11,12 @@
       <td><a href="{{ callback.url }}" class="btn btn-link" target="_blank" data-toggle="tooltip" title="{{ callback.url }}">{{ text_go_to }} <i class="fa fa-external-link"></i></a></td>
       <td>{{ callback.comment }}</td>
       <td>{{ callback.status_name }}</td>
-      <td class="text-right">buttons</td>
+      <td class="text-right">
+        <div class="btn-group" role="group">
+          <button type="button" class="btn btn-sm btn-warning" data-toggle="tooltip" title="{{ button_edit }}"><i class="fa fa-pencil"></i></button>
+          <button type="button" class="btn btn-sm btn-danger" data-id="{{ callback.callback_id }}" data-toggle="tooltip" title="{{ button_remove }}"><i class="fa fa-trash"></i></button>
+        </div>
+      </td>
     </tr>
   {% endfor %}
 {% else %}

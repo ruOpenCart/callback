@@ -23,7 +23,7 @@
       </div>
     {% endif %}
     <div class="row">
-      <div id="filter-product" class="col-md-3 col-md-push-9 col-sm-12 hidden-sm hidden-xs">
+      <div id="callback-filter" class="col-md-3 col-md-push-9 col-sm-12 hidden-sm hidden-xs">
         <div class="panel panel-default">
           <div class="panel-heading">
             <h3 class="panel-title"><i class="fa fa-filter"></i> {{ text_filter }}</h3>
@@ -32,11 +32,12 @@
           </div>
         </div>
       </div>
-      <div class="col-md-9 col-md-pull-3 col-sm-12">
+      <div id="callback-panel" class="col-md-9 col-md-pull-3 col-sm-12">
         <div class="panel panel-default">
           <div class="panel-heading">
             <div class="pull-right">
-              <button data-toggle="tooltip" data-url="{{ url_update }}" title="{{ button_update }}" class="btn btn-warning btn-sm" id="button-update"><i class="fa fa-refresh"></i></button>
+              <button type="button" data-toggle="tooltip" data-url="{{ url_remove }}" title="{{ button_remove }}" class="btn btn-danger btn-sm" id="button-remove" data-warning="{{ title_warning }}" data-error="{{ error_not_selected }}" data-confirm="{{ confirm_remove }}"><i class="fa fa-trash"></i></button>
+              <button type="button" data-toggle="tooltip" data-url="{{ url_update }}" title="{{ button_update }}" class="btn btn-primary btn-sm" id="button-update"><i class="fa fa-refresh"></i></button>
             </div>
             <h3 class="panel-title"><i class="fa fa-list"></i> {{ text_list }}</h3>
           </div>
@@ -46,7 +47,7 @@
                 <table class="table table-bordered table-hover">
                   <thead>
                   <tr>
-                    <td style="width: 1px;" class="text-center"><input type="checkbox" id="select-all"></td>
+                    <td class="text-center"><input type="checkbox" id="select-all"></td>
                     <td>{{ column_id }}</td>
                     <td>{{ column_name }}</td>
                     <td>{{ column_email }}</td>
@@ -96,8 +97,34 @@
 {{ footer }}
 <script>
     $(document).ready(function() {
-        $('#button-update').on('click', function () {
-            console.log('update');
+        $('#button-update').on('click', updateItems);
+
+        $('#list-items button.btn-danger').on('click', function() {
+            const id = $(this).attr('data-id');
+            if (confirm($('#button-remove').attr('data-confirm'))) {
+                $('input[name*="selected"][value="' + id + '"]').prop('checked', true);
+                removeItems();
+            }
+        });
+        $('#button-remove').on('click', function() {
+            const button = $('#button-remove');
+            let checked = [];
+            $('input[name*="selected"]:checked').each(function() {
+                checked.push(this.value);
+            });
+
+            if (checked.length) {
+                if (confirm(button.attr('data-confirm'))) {
+                    removeItems();
+                }
+            } else {
+                const warning = button.attr('data-warning');
+                const error = button.attr('data-error');
+                showAlert($('#callback-panel'), 'warning', warning, error);
+            }
+        });
+
+        function updateItems() {
             const button = $('#button-update');
             const url = button.attr('data-url');
             let list = $("#list-items");
@@ -116,21 +143,55 @@
                     if ( status === "success" ) {
                         // if status success
                     }
-                    unLockButtons()
+                    unLockButtons();
                     button.find('i.fa').removeClass('fa-spinner fa-pulse').addClass('fa-refresh');
                 }
             );
-        });
+        }
+        function removeItems() {
+            const button = $('#button-remove');
+            const url = button.attr('data-url');
+
+            lockButtons();
+            button.find('i.fa').removeClass('fa-trash').addClass('fa-spinner fa-pulse');
+
+            $.ajax({
+                type: 'post',
+                url: url,
+                data: $('#form-callback-list').serialize(),
+                dataType: 'json',
+                success: function(response) {
+                    unLockButtons();
+                    updateItems();
+                    showAlert($('#callback-panel'), 'success', 'success', response.success);
+                },
+                error: function(xhr, ajaxOptions, thrownError) {
+                    alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+                },
+                complete: function() {
+                    button.find('i.fa').removeClass('fa-spinner fa-pulse').addClass('fa-trash');
+                }
+            });
+        }
 
         function lockButtons() {
             $('#button-update').prop('disabled', true);
+            $('#button-remove').prop('disabled', true);
         }
         function unLockButtons() {
             $('#button-update').prop('disabled', false);
+            $('#button-remove').prop('disabled', false);
         }
 
-        $('#select-all').on('click', function () {
+        $('#select-all').on('click', function() {
             $('input[name*="selected"]').prop('checked', this.checked);
-        })
+        });
+
+        // Alerts
+        function showAlert(block, color, status, text) {
+            block.find('> .alert').hide('slow');
+            let alertBlock = '<div class="alert alert-' + color + ' alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><strong>' + status + ': </strong> ' + text + '</div>';
+            block.prepend(alertBlock);
+        }
     });
 </script>

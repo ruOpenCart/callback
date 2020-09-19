@@ -8,4 +8,10 @@ class ModelExtensionModuleOcnCallBack extends Model {
 		
 		return $this->db->query($query)->rows;
 	}
+	
+	public function remove($ids) {
+		$query = "DELETE FROM " . DB_PREFIX . "ocn_callback WHERE callback_id IN (" . $ids . ")";
+		
+		return $this->db->query($query);
+	}
 }

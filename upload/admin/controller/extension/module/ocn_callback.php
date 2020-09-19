@@ -51,6 +51,7 @@ class ControllerExtensionModuleOCNCallBack extends Controller {
 		$data['url_settings'] = $this->url->link('extension/module/ocn_callback', $this->user_token, true);
 		$data['url_cancel'] = $this->url->link('marketplace/extension', $this->user_token . '&type=module', true);
 		$data['url_update'] = $this->url->link('extension/module/ocn_callback/items', $this->user_token, true);
+		$data['url_remove'] = $this->url->link('extension/module/ocn_callback/remove', $this->user_token, true);
 		
 		// Data
 		$data['view_items'] = $this->getItems();
@@ -76,6 +77,30 @@ class ControllerExtensionModuleOCNCallBack extends Controller {
 	{
 		$this->response->setOutput($this->getItems());
 	}
+	
+	public function remove()
+	{
+		$this->load->language('extension/module/ocn_callback/ocn_callback_list');
+		$this->load->model('extension/module/ocn_callback');
+		
+		$selected = $this->request->post['selected'];
+		$ids = implode(',', $selected);
+		
+		$status = $this->model_extension_module_ocn_callback->remove($ids);
+		
+		if ($status) {
+			$data['status'] = 'success';
+			$data['title'] = $this->language->get('title_success');
+			$data['text'] = $this->language->get('error_delete');
+		} else {
+			$data['status'] = 'error';
+			$data['title'] = $this->language->get('title_error');
+			$data['text'] = $this->language->get('error_delete');
+		}
+		
+		$this->response->addHeader('Content-Type: application/json; charset=utf-8');
+		$this->response->setOutput(json_encode($data));
+	}
 
 	public function index() {
 		$this->load->language('extension/module/ocn_callback/ocn_callback_settings');
@@ -85,7 +110,7 @@ class ControllerExtensionModuleOCNCallBack extends Controller {
 			$this->load->model('setting/setting');
 			$this->model_setting_setting->editSetting('module_ocn_callback', $this->request->post);
 			
-			$this->session->data['success'] = $this->language->get('text_success');
+			$this->session->data['success'] = $this->language->get('title_success');
 			
 			// If button apply
 			if (isset($this->request->post['apply']) && $this->request->post['apply']) {
