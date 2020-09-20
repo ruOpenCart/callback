@@ -1,26 +1,57 @@
-{% if list %}
-  {% for callback in list %}
-    <tr>
-      <td class="text-center">
-        <input type="checkbox" name="selected[]" value="{{ callback.callback_id }}" {% if callback.callback_id in selected %}checked="checked"{% endif %}>
-      </td>
-      <td>{{ callback.callback_id }}</td>
-      <td>{{ callback.name }}</td>
-      <td>{% if (callback.email) %}<a href="mailto:{{ callback.email }}"><i class="fa fa-envelope" aria-hidden="true"></i> {{ callback.email }}</a>{% endif %}</td>
-      <td>{% if (callback.phone) %}<a href="tel:{{ callback.phone }}"><i class="fa fa-phone" aria-hidden="true"></i> {{ callback.phone }}</a>{% endif %}</td>
-      <td>{% if (callback.url) %}<a href="{{ callback.url }}" class="btn btn-link" target="_blank" data-toggle="tooltip" title="{{ callback.url }}">{{ text_go_to }} <i class="fa fa-external-link"></i></a>{% endif %}</td>
-      <td>{{ callback.comment }}</td>
-      <td>{{ callback.status_name }}</td>
-      <td class="text-right">
-        <div class="btn-group" role="group">
-          <button type="button" class="btn btn-sm btn-warning" data-id="{{ callback.callback_id }}" data-toggle="tooltip" title="{{ button_edit }}"><i class="fa fa-pencil"></i></button>
-          <button type="button" class="btn btn-sm btn-danger" data-id="{{ callback.callback_id }}" data-toggle="tooltip" title="{{ button_remove }}"><i class="fa fa-trash"></i></button>
-        </div>
-      </td>
-    </tr>
-  {% endfor %}
-{% else %}
-  <tr>
-    <td class="text-center" colspan="4">{{ text_no_results }}</td>
-  </tr>
-{% endif %}
+<form action="{{ url_action }}" method="post" enctype="multipart/form-data" id="form-callback-list" class="form-horizontal" data-get="{{ url_get }}">
+  <div class="table-responsive">
+    <table class="table table-bordered table-hover">
+      <thead>
+      <tr>
+        <td class="text-center"><input type="checkbox" id="select-all"></td>
+        <td>{{ column_id }}</td>
+        <td>{{ column_name }}</td>
+        <td>{{ column_email }}</td>
+        <td>{{ column_phone }}</td>
+        <td>{{ column_url }}</td>
+        <td>{{ column_comment }}</td>
+        <td>{{ column_status }}</td>
+        <td class="text-right">{{ column_action }}</td>
+      </tr>
+      </thead>
+      <tbody id="list-items">
+        {% if list %}
+          {% for callback in list %}
+            <tr>
+              <td class="text-center">
+                <input type="checkbox" name="selected[]" value="{{ callback.callback_id }}" {% if callback.callback_id in selected %}checked="checked"{% endif %}>
+              </td>
+              <td>{{ callback.callback_id }}</td>
+              <td>{{ callback.name }}</td>
+              <td>{% if (callback.email) %}<a href="mailto:{{ callback.email }}"><i class="fa fa-envelope" aria-hidden="true"></i> {{ callback.email }}</a>{% endif %}</td>
+              <td>{% if (callback.phone) %}<a href="tel:{{ callback.phone }}"><i class="fa fa-phone" aria-hidden="true"></i> {{ callback.phone }}</a>{% endif %}</td>
+              <td>{% if (callback.url) %}<a href="{{ callback.url }}" class="btn btn-link" target="_blank" data-toggle="tooltip" title="{{ callback.url }}">{{ text_go_to }} <i class="fa fa-external-link"></i></a>{% endif %}</td>
+              <td>{{ callback.comment }}</td>
+              <td>{{ callback.status_name }}</td>
+              <td class="text-right">
+                <div class="btn-group" role="group">
+                  <button type="button" class="btn btn-sm btn-warning" data-id="{{ callback.callback_id }}" data-toggle="tooltip" title="{{ button_edit }}"><i class="fa fa-pencil"></i></button>
+                  <button type="button" class="btn btn-sm btn-danger" data-id="{{ callback.callback_id }}" data-toggle="tooltip" title="{{ button_remove }}"><i class="fa fa-trash"></i></button>
+                </div>
+              </td>
+            </tr>
+          {% endfor %}
+        {% else %}
+          <tr>
+            <td class="text-center" colspan="9">{{ text_no_results }}</td>
+          </tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+</form>
+<div class="row">
+  <div class="col-sm-6">
+    <nav id="callback-nav-bottom" aria-label="Page navigation">
+      {{ view_pagination }}
+    </nav>
+  </div>
+  <div class="col-sm-6 text-right">
+    {{ result }}
+  </div>
+</div>

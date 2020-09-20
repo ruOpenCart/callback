@@ -41,52 +41,8 @@
             </div>
             <h3 class="panel-title"><i class="fa fa-list"></i> {{ text_list }}</h3>
           </div>
-          <div class="panel-body">
-            <form action="{{ url_action }}" method="post" enctype="multipart/form-data" id="form-callback-list" class="form-horizontal" data-get="{{ url_get }}">
-              <div class="table-responsive">
-                <table class="table table-bordered table-hover">
-                  <thead>
-                  <tr>
-                    <td class="text-center"><input type="checkbox" id="select-all"></td>
-                    <td>{{ column_id }}</td>
-                    <td>{{ column_name }}</td>
-                    <td>{{ column_email }}</td>
-                    <td>{{ column_phone }}</td>
-                    <td>{{ column_url }}</td>
-                    <td>{{ column_comment }}</td>
-                    <td>{{ column_status }}</td>
-                    <td class="text-right">{{ column_action }}</td>
-                  </tr>
-                  </thead>
-                  <tbody id="list-items">
-                  {{ view_items }}
-                  </tbody>
-                </table>
-              </div>
-            </form>
-            <div class="row">
-              <div class="col-sm-12">
-                <nav aria-label="Page navigation">
-                  <ul class="pagination">
-                    <li>
-                      <a href="#" aria-label="Previous">
-                        <span aria-hidden="true">&laquo;</span>
-                      </a>
-                    </li>
-                    <li><a href="#">1</a></li>
-                    <li><a href="#">2</a></li>
-                    <li><a href="#">3</a></li>
-                    <li><a href="#">4</a></li>
-                    <li><a href="#">5</a></li>
-                    <li>
-                      <a href="#" aria-label="Next">
-                        <span aria-hidden="true">&raquo;</span>
-                      </a>
-                    </li>
-                  </ul>
-                </nav>
-              </div>
-            </div>
+          <div class="panel-body" id="items">
+            {{ view_items }}
           </div>
           <div class="panel-footer">{{ heading_title }} v{{ data_version }}</div>
         </div>
@@ -101,11 +57,19 @@
         // Check/uncheck all checkbox action
         $('#select-all').on('click', toggleAllCheckbox);
 
-        // Update items action
+        // Update items on clock main update action
         $('#button-update').on('click', updateItems);
+        // Pagination.
+        $('#items').on('click', '#callback-nav-bottom a', function (event) {
+            event.preventDefault();
+            let url = $(this).attr('href');
+            let urlList = url.replace('items', 'list');
+            history.pushState(null, null, urlList);
+            updateItems(url);
+        });
 
         // Delete item/items action
-        $('#list-items').on('click', 'button.btn-danger', function() {
+        $('#items').on('click', '#list-items button.btn-danger', function() {
             const id = $(this).attr('data-id');
             if (confirm($('#button-remove').attr('data-confirm'))) {
                 $('input[name*="selected"]').prop('checked', false);
@@ -132,8 +96,9 @@
             }
         });
 
-        // Modal
-        $('#list-items').on('click', 'button.btn-warning', function() {
+        // Begin Modal
+        // Show edit modal
+        $('#items').on('click', '#list-items button.btn-warning', function() {
             const id = $(this).attr('data-id');
             $('#callback-modal').modal('show');
             $('#form-callback-modal').find('.form-control').prop('disabled', true);
@@ -142,13 +107,14 @@
             $('#form-callback-modal').find('.btn-primary>i.fa').removeClass('fa-floppy-o').addClass('fa-spinner fa-pulse');
             getById(id);
         });
+        // Action after hide modal
         $('#callback-modal').on('hide.bs.modal', function (e) {
             document.getElementById('form-callback-modal').reset();
         })
-
+        // Update item from modal form
         $('#form-callback-modal').on('click', 'button.btn-primary', update);
 
-
+        // Update item from modal data
         function update() {
             const url = $('#form-callback-modal').attr('action');
 
@@ -178,7 +144,7 @@
                 }
             });
         }
-
+        // Get item data for modal
         function getById(id) {
             const url = $('#form-callback-list').attr('data-get');
             $.ajax({
@@ -200,7 +166,7 @@
                 }
             });
         }
-
+        // Fill item data in modal
         function fillFormModal(callback, statuses) {
             $('#form-callback-id').val(callback.callback_id);
             $('#form-callback-name').val(callback.name);
@@ -216,24 +182,26 @@
                 }));
             });
         }
+        // End Modal
 
         // Update items
-        function updateItems() {
+        function updateItems(pageUrl) {
             $('button').tooltip('hide');
             const button = $('#button-update');
-            const url = button.attr('data-url');
-            let list = $("#list-items");
+            const current = $('#callback-nav-bottom li.active').attr('data-current');
+            const url = (typeof pageUrl !== 'string') ? current : pageUrl;
+            let items = $("#items");
 
-            list.html('');
+            items.html('');
             lockButtons();
             button.find('i.fa').removeClass('fa-refresh').addClass('fa-spinner fa-pulse');
 
-            list.load(
+            items.load(
                 url,
                 function( response, status, xhr ) {
                     if ( status === "error" ) {
                         let msg = "Error: ";
-                        list.html( msg + xhr.status + " " + xhr.statusText );
+                        items.html( msg + xhr.status + " " + xhr.statusText );
                     }
                     unLockButtons();
                     button.find('i.fa').removeClass('fa-spinner fa-pulse').addClass('fa-refresh');
@@ -267,17 +235,18 @@
             });
         }
 
-        // Lock/unlock buttons
+        // Lock main action buttons
         function lockButtons() {
             $('#button-update').prop('disabled', true);
             $('#button-remove').prop('disabled', true);
         }
+        // Unlock main action buttons
         function unLockButtons() {
             $('#button-update').prop('disabled', false);
             $('#button-remove').prop('disabled', false);
         }
 
-        // Toggle checkbox
+        // Toggle checkbox (select all)
         function toggleAllCheckbox() {
             $('input[name*="selected"]').prop('checked', this.checked);
         }
