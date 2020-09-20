@@ -33,11 +33,11 @@ class ControllerExtensionModuleOCNCallBack extends Controller {
 			
 			// If button apply
 			if (isset($this->request->post['apply']) && $this->request->post['apply']) {
-				$this->response->redirect($this->url->link('extension/module/ocn_callback', $this->user_token, true));
+				$this->response->redirect($this->generateLink('extension/module/ocn_callback'));
 			}
 			
 			// Go to list modules
-			$this->response->redirect($this->url->link('marketplace/extension', $this->user_token . '&type=module', true));
+			$this->response->redirect($this->generateLink('marketplace/extension'));
 		}
 		
 		$this->getData();
@@ -131,9 +131,9 @@ class ControllerExtensionModuleOCNCallBack extends Controller {
 		$data['breadcrumbs'] = $this->generateBreadcrumbs('extension/module/ocn_callback');
 		
 		// Buttons
-		$data['url_action'] = $this->url->link('extension/module/ocn_callback', $this->user_token, true);
-		$data['url_list'] = $this->url->link('extension/module/ocn_callback/list', $this->user_token, true);
-		$data['url_cancel'] = $this->url->link('marketplace/extension', $this->user_token . '&type=module', true);
+		$data['url_action'] = $this->generateLink('extension/module/ocn_callback');
+		$data['url_list'] = $this->generateLink('extension/module/ocn_callback/list');
+		$data['url_cancel'] = $this->generateLink('marketplace/extension', ['type' => 'module']);
 		
 		// Templates
 		// Tabs
@@ -167,11 +167,11 @@ class ControllerExtensionModuleOCNCallBack extends Controller {
 		$data['breadcrumbs'] = $this->generateBreadcrumbs('extension/module/ocn_callback/list');
 		
 		// Buttons
-		$data['url_settings'] = $this->url->link('extension/module/ocn_callback', $this->user_token, true);
-		$data['url_cancel'] = $this->url->link('marketplace/extension', $this->user_token . '&type=module', true);
-		$data['url_update'] = $this->url->link('extension/module/ocn_callback/items', $this->user_token, true);
-		$data['url_remove'] = $this->url->link('extension/module/ocn_callback/remove', $this->user_token, true);
-		$data['url_test'] = $this->url->link('extension/module/ocn_callback/test', $this->user_token, true);
+		$data['url_settings'] = $this->generateLink('extension/module/ocn_callback');
+		$data['url_cancel'] = $this->generateLink('marketplace/extension', ['type' => 'module']);
+		$data['url_update'] = $this->generateLink('extension/module/ocn_callback/items');
+		$data['url_remove'] = $this->generateLink('extension/module/ocn_callback/remove');
+		$data['url_test'] = $this->generateLink('extension/module/ocn_callback/test');
 		
 		// Data
 		$data['view_modal'] = $this->viewListModal();
@@ -190,7 +190,7 @@ class ControllerExtensionModuleOCNCallBack extends Controller {
 	private function viewListModal() {
 		$this->load->language('extension/module/ocn_callback/ocn_callback_list_modal');
 		
-		$data['url_action'] = $this->url->link('extension/module/ocn_callback/update', $this->user_token, true);
+		$data['url_action'] = $this->generateLink('extension/module/ocn_callback/update');
 		
 		return $this->load->view('extension/module/ocn_callback/ocn_callback_list_modal', $data);
 	}
@@ -198,12 +198,12 @@ class ControllerExtensionModuleOCNCallBack extends Controller {
 	private function viewListItems() {
 		$this->load->language('extension/module/ocn_callback/ocn_callback_list_items');
 		
-		$data['url_get'] = $this->url->link('extension/module/ocn_callback/get', $this->user_token, true);
+		$data['url_get'] = $this->generateLink('extension/module/ocn_callback/get');
 		
 		// Prepare paginate
 		$this->load->model('extension/module/ocn_callback');
 		$total = (int)$this->model_extension_module_ocn_callback->total();
-		$path = $this->url->link('extension/module/ocn_callback/items', $this->user_token, true);
+		$path = $this->generateLink('extension/module/ocn_callback/items');
 		$page = (isset($this->request->get['page']) && $this->request->get['page'] > 1) ? (int)$this->request->get['page'] : 1;
 		$paginate = $this->generatePagination($total, $path, $page);
 		
@@ -245,15 +245,15 @@ class ControllerExtensionModuleOCNCallBack extends Controller {
 		return [
 			[
 				'text' => $this->language->get('text_home'),
-				'href' => $this->url->link('common/dashboard', $this->user_token, true)
+				'href' => $this->generateLink('common/dashboard')
 			],
 			[
 				'text' => $this->language->get('text_extension'),
-				'href' => $this->url->link('marketplace/extension', $this->user_token . '&type=module', true)
+				'href' => $this->generateLink('marketplace/extension', ['type' => 'module'])
 			],
 			[
 				'text' => $this->language->get('heading_title'),
-				'href' => $this->url->link($module, $this->user_token, true)
+				'href' => $this->generateLink($module)
 			]
 		];
 	}
@@ -263,6 +263,15 @@ class ControllerExtensionModuleOCNCallBack extends Controller {
 		$pagination->prepare($total, $path, $current_page);
 		
 		return $pagination->get();
+	}
+	// Link
+	private function generateLink($module, $params = [])
+	{
+		$url = '';
+		foreach ($params as $key => $value) {
+			$url .= '&' . $key . '=' . $value;
+		}
+		return $this->url->link($module, $this->user_token . $url, true);
 	}
 	
 	// Install
