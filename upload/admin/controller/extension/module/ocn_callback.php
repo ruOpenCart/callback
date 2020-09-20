@@ -4,8 +4,7 @@ class ControllerExtensionModuleOCNCallBack extends Controller {
 	private $user_token;
 	private $version = '3.0.0.0';
 	
-	public function __construct($registry)
-	{
+	public function __construct($registry) {
 		parent::__construct($registry);
 		
 		$this->user_token = 'user_token=' . $this->session->data['user_token'];
@@ -20,8 +19,7 @@ class ControllerExtensionModuleOCNCallBack extends Controller {
 		$this->removeTables();
 	}
 	
-	public function list()
-	{
+	public function list() {
 		$this->load->language('extension/module/ocn_callback/ocn_callback_list');
 		$this->document->setTitle($this->language->get('heading_title'));
 		
@@ -52,11 +50,11 @@ class ControllerExtensionModuleOCNCallBack extends Controller {
 		$data['url_cancel'] = $this->url->link('marketplace/extension', $this->user_token . '&type=module', true);
 		$data['url_update'] = $this->url->link('extension/module/ocn_callback/items', $this->user_token, true);
 		$data['url_remove'] = $this->url->link('extension/module/ocn_callback/remove', $this->user_token, true);
-		$data['url_get'] = $this->url->link('extension/module/ocn_callback/get', $this->user_token, true);
+		$data['url_test'] = $this->url->link('extension/module/ocn_callback/test', $this->user_token, true);
 		
 		// Data
-		$data['view_items'] = $this->viewListItems();
 		$data['view_modal'] = $this->viewListModal();
+		$data['view_items'] = $this->viewListItems();
 		
 		// Main
 		$data['header'] = $this->load->controller('common/header');
@@ -66,31 +64,48 @@ class ControllerExtensionModuleOCNCallBack extends Controller {
 		$this->response->setOutput($this->load->view('extension/module/ocn_callback/ocn_callback_list', $data));
 	}
 	
-	private function viewListModal()
-	{
+	private function viewListModal() {
 		$this->load->language('extension/module/ocn_callback/ocn_callback_list_modal');
 		
 		$data['url_action'] = $this->url->link('extension/module/ocn_callback/update', $this->user_token, true);
 		
 		return $this->load->view('extension/module/ocn_callback/ocn_callback_list_modal', $data);
 	}
-	
-	private function viewListItems()
-	{
+	private function viewListItems() {
 		$this->load->language('extension/module/ocn_callback/ocn_callback_list_items');
+		
+		$data['url_get'] = $this->url->link('extension/module/ocn_callback/get', $this->user_token, true);
+		
+		// Prepare paginate
 		$this->load->model('extension/module/ocn_callback');
-		$data['list'] = $this->model_extension_module_ocn_callback->list();
+		$total = (int)$this->model_extension_module_ocn_callback->total();
+		$path = $this->url->link('extension/module/ocn_callback/items', $this->user_token, true);
+		$page = (isset($this->request->get['page']) && $this->request->get['page'] > 1) ? (int)$this->request->get['page'] : 1;
+		$paginate = $this->generatePagination($total, $path, $page);
+		
+		$data['result'] = sprintf($this->language->get('text_pagination'), $paginate['from'] + 1, $paginate['current_page'] == $paginate['last_page'] ? $paginate['total'] : $paginate['to'], $paginate['total']);
+		
+		$filter_data = array(
+			'start' => $paginate['from'],
+			'limit' => $paginate['per_page']
+		);
+		
+		$data['list'] = $this->model_extension_module_ocn_callback->list($filter_data);
+		$data['view_pagination'] = $this->viewListPagination($paginate);
 		
 		return $this->load->view('extension/module/ocn_callback/ocn_callback_list_items', $data);
 	}
+	private function viewListPagination($data) {
+		$this->load->language('extension/module/ocn_callback/ocn_callback_list_pagination');
+		
+		return $this->load->view('extension/module/ocn_callback/ocn_callback_list_pagination', $data);
+	}
 	
-	public function items()
-	{
+	public function items() {
 		$this->response->setOutput($this->viewListItems());
 	}
 	
-	public function remove()
-	{
+	public function remove() {
 		$this->load->language('extension/module/ocn_callback/ocn_callback_list');
 		$this->load->model('extension/module/ocn_callback');
 		
@@ -113,8 +128,7 @@ class ControllerExtensionModuleOCNCallBack extends Controller {
 		$this->response->setOutput(json_encode($data));
 	}
 	
-	public function get()
-	{
+	public function get() {
 		$this->load->model('extension/module/ocn_callback');
 		
 		$data['callback'] = $this->model_extension_module_ocn_callback->getById($this->request->get['callback_id']);
@@ -124,8 +138,7 @@ class ControllerExtensionModuleOCNCallBack extends Controller {
 		$this->response->setOutput(json_encode($data));
 	}
 	
-	public function update()
-	{
+	public function update() {
 		$this->load->language('extension/module/ocn_callback/ocn_callback_list_modal');
 		$this->load->model('extension/module/ocn_callback');
 		$status = $this->model_extension_module_ocn_callback->update($this->request->post);
@@ -231,6 +244,14 @@ class ControllerExtensionModuleOCNCallBack extends Controller {
 		];
 	}
 	
+	protected function generatePagination($total, $path, $current_page = 1) {
+		$pagination = new \OCN\Pagination();
+		$pagination->prepare($total, $path, $current_page);
+		
+		return $pagination->get();
+	}
+	
+	// Install extension
 	protected function createTables() {
 		$this->db->query(
 			"CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "ocn_callback_status` (
@@ -258,7 +279,6 @@ class ControllerExtensionModuleOCNCallBack extends Controller {
 			) ENGINE=MyISAM DEFAULT COLLATE=utf8_general_ci;"
 		);
 	}
-	
 	protected function fillTables() {
 		$this->load->model('localisation/language');
 		$languages = $this->model_localisation_language->getLanguages();
@@ -284,9 +304,8 @@ class ControllerExtensionModuleOCNCallBack extends Controller {
 			);
 		}
 	}
-	
-	protected function removeTables()
-	{
+	// Uninstall extension
+	protected function removeTables() {
 		$this->db->query("DROP TABLE IF EXISTS `" . DB_PREFIX . "ocn_callback_status`;");
 		$this->db->query("DROP TABLE IF EXISTS `" . DB_PREFIX . "ocn_callback`;");
 	}
