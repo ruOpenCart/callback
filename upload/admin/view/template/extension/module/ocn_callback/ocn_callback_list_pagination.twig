@@ -1,0 +1,29 @@
+<ul class="pagination">
+  <li {% if(prev_page_url == '') %}class="disabled"{% endif %}>
+    {% if(prev_page_url == '') %}
+      <span aria-hidden="true">&laquo;</span>
+    {% else %}
+      <a href="{{ prev_page_url }}" aria-label="Previous">
+        <span aria-hidden="true">&laquo;</span>
+      </a>
+    {% endif %}
+  </li>
+  {% for key, page in pages %}
+    <li class="{% if (page.active) %}active{% endif %}{% if (page.disabled) %}disabled{% endif %}" {% if(current_page == key) %}data-current="{{ page.url }}"{% endif %}>
+      {% if(current_page == key) %}
+        <span>{{ page.page }}</span>
+      {% else %}
+        <a href="{{ page.url }}">{{ page.page }}</a>
+      {% endif %}
+    </li>
+  {% endfor %}
+  <li {% if(next_page_url == '') %}class="disabled"{% endif %}>
+    {% if(next_page_url == '') %}
+      <span aria-hidden="true">&raquo;</span>
+    {% else %}
+      <a href="{{ next_page_url }}" aria-label="Next">
+        <span aria-hidden="true">&raquo;</span>
+      </a>
+    {% endif %}
+  </li>
+</ul>
