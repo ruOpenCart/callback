@@ -28,12 +28,3 @@ $_['success_delete']     = 'Записи были успешно удалены!
 // Confirm
 $_['confirm_remove']     = 'Подтверждаете удаление?';
 
-// Column
-$_['column_id']        = '№';
-$_['column_name']      = 'Имя';
-$_['column_email']     = 'Эл. Почта';
-$_['column_phone']     = 'Телефон';
-$_['column_comment']   = 'Комментарий';
-$_['column_url']       = 'URL-Адрес';
-$_['column_status']    = 'Статус';
-$_['column_action']    = 'Действие';

@@ -27,13 +27,3 @@ $_['success_delete']     = 'Entries have been successfully deleted!';
 
 // Confirm
 $_['confirm_remove']     = 'Confirm deletion?';
-
-// Column
-$_['column_id']        = '№';
-$_['column_name']      = 'Name';
-$_['column_email']     = 'Email';
-$_['column_phone']     = 'Telephone';
-$_['column_comment']   = 'Comment';
-$_['column_url']       = 'URL-address';
-$_['column_status']    = 'Status';
-$_['column_action']    = 'Action';
