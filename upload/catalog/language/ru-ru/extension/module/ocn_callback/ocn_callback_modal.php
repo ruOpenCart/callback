@@ -11,3 +11,4 @@ $_['label_email']   = 'Эл. Почта';
 // Modal buttons
 $_['button_send']   = 'Отправить';
 $_['button_close']  = 'Закрыть';
+

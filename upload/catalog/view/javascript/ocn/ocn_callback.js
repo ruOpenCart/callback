@@ -1,29 +1,26 @@
 $(document).ready(function() {
-    let modal = $('#ocn-callback-modal');
-    // let callback = $('#ocn-callback');
-
+    // Show modal action
     $('#ocn-callback-modal').on('show.bs.modal', function (e) {
         $('#ocn-callback-show').hide(500);
         $('#ocn-callback-url').val(window.location.href);
     });
+    // Hide modal action
     $('#ocn-callback-modal').on('hide.bs.modal', function (e) {
         $('#ocn-callback-show').show(500);
         document.getElementById('ocn-callback-form').reset();
         $('.form-group').removeClass('has-success').removeClass('has-error');
     });
-
+    // Store data for callback
     $('#ocn-callback-store').on('click', function(e) {
-        if (validateForm()) {
-            storeCallback();
-            modal.modal('hide');
-            $('#ocn-callback-alert').modal('show');
-        }
+        e.preventDefault();
+        if (validateForm()) storeCallback();
     });
 
+    // Function for store data callback to db
     function storeCallback() {
         const button = $('#ocn-callback-store');
         const url = $('#ocn-callback-form').attr('action');
-        const formData = $('#ocn-callback-form').serialize()
+        const formData = $('#ocn-callback-form').serialize();
 
         lockButtons();
         button.find('i.fa').removeClass('fa-paper-plane').addClass('fa-spinner fa-pulse');
@@ -34,10 +31,16 @@ $(document).ready(function() {
             data: formData,
             dataType: 'json',
             success: function (response) {
-                if (response.errors) {
-                    console.log(response);
-                } else if (response.success) {
-                    console.log(response);
+                if (response.status === 'success') {
+                    $('#ocn-callback-modal').modal('hide');
+                    $('#ocn-callback-alert').modal('show');
+                } else if (response.status === 'error') {
+                    if (response.errors.phone) {
+                        $('#ocn-callback-phone').parents('.form-group').addClass('has-error');
+                    }
+                    if (response.errors.name) {
+                        $('#ocn-callback-name').parents('.form-group').addClass('has-error');
+                    }
                 }
             },
             error: function (xhr, ajaxOptions, thrownError) {
@@ -64,27 +67,19 @@ $(document).ready(function() {
 
         let name = $('#ocn-callback-name');
         name.parents('.form-group').find('.help-block').remove();
-        if (name.val() !== '') {
-            if (validateName(name.val())) {
-                name.parents('.form-group').addClass('has-success').removeClass('has-error');
-            } else {
-                errors++;
-                name.parents('.form-group').addClass('has-error').removeClass('has-success');
-            }
+        if (validateName(name.val())) {
+            name.parents('.form-group').addClass('has-success').removeClass('has-error');
         } else {
-            name.parents('.form-group').removeClass('has-error').removeClass('has-success');
+            errors++;
+            name.parents('.form-group').addClass('has-error').removeClass('has-success');
         }
 
         let phone = $('#ocn-callback-phone');
-        if (phone.val() !== '') {
-            if (validatePhone(phone.val())) {
-                phone.parents('.form-group').addClass('has-success').removeClass('has-error');
-            } else {
-                errors++;
-                phone.parents('.form-group').addClass('has-error').removeClass('has-success');
-            }
+        if (validatePhone(phone.val())) {
+            phone.parents('.form-group').addClass('has-success').removeClass('has-error');
         } else {
-            phone.parents('.form-group').removeClass('has-error').removeClass('has-success');
+            errors++;
+            phone.parents('.form-group').addClass('has-error').removeClass('has-success');
         }
 
         let email = $('#ocn-callback-email');
