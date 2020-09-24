@@ -8,7 +8,7 @@ class ModelExtensionModuleOcnCallback extends Model {
 		$query .= " name = '" . $formData['name'] . "', ";
 		$query .= " email = '" . $formData['email'] . "', ";
 		$query .= " phone = '" . $formData['phone'] . "', ";
-		$query .= " comment = '" . $formData['comment'] . "', ";
+		$query .= " message = '" . $formData['message'] . "', ";
 		$query .= " date_added = NOW(),";
 		$query .= " date_modified = NOW()";
 		

@@ -26,7 +26,7 @@ class ControllerExtensionModuleOCNCallback extends Controller {
 				'name' => htmlspecialchars($this->request->post['name'], ENT_QUOTES),
 				'email' => htmlspecialchars($this->request->post['email'], ENT_QUOTES),
 				'phone' => htmlspecialchars($this->request->post['phone'], ENT_QUOTES),
-				'comment' => htmlspecialchars($this->request->post['comment'], ENT_QUOTES)
+				'message' => htmlspecialchars($this->request->post['message'], ENT_QUOTES)
 			];
 			
 			$json['callback_id'] = $this->model_extension_module_ocn_callback->addCallback($callbackData);

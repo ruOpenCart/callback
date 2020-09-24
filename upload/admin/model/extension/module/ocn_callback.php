@@ -24,7 +24,7 @@ class ModelExtensionModuleOcnCallBack extends Model {
 		$query .= " name = '" . $data['name'] . "',";
 		$query .= " email = '" . $data['email'] . "',";
 		$query .= " phone = '" . $data['phone'] . "',";
-		$query .= " comment = '" . $data['comment'] . "',";
+		$query .= " message = '" . $data['message'] . "',";
 		$query .= " date_modified = NOW()";
 		$query .= " WHERE cb.callback_id = '" . (int)$data['callback_id'] . "'";
 		

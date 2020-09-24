@@ -296,7 +296,7 @@ class ControllerExtensionModuleOCNCallBack extends Controller {
 			    `name` varchar(32) NULL,
 				`email` varchar(96) NULL,
 				`phone` varchar(32) NULL,
-				`comment` text NULL,
+				`message` text NULL,
 				`date_added` datetime NOT NULL,
 				`date_modified` datetime NOT NULL,
 			    PRIMARY KEY (`callback_id`)

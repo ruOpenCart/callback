@@ -5,7 +5,7 @@ $_['modal_title']   = 'Request a call back';
 // Modal form
 $_['label_name']    = 'Name';
 $_['label_phone']   = 'Phone';
-$_['label_comment'] = 'Comment';
+$_['label_message'] = 'Message';
 $_['label_email']   = 'E-Mail';
 
 // Modal buttons

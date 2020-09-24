@@ -9,7 +9,7 @@
         <td>{{ column_email }}</td>
         <td>{{ column_phone }}</td>
         <td>{{ column_url }}</td>
-        <td>{{ column_comment }}</td>
+        <td>{{ column_message }}</td>
         <td>{{ column_status }}</td>
         <td class="text-right">{{ column_action }}</td>
       </tr>
@@ -26,7 +26,7 @@
               <td>{% if (callback.email) %}<a href="mailto:{{ callback.email }}"><i class="fa fa-envelope" aria-hidden="true"></i> {{ callback.email }}</a>{% endif %}</td>
               <td>{% if (callback.phone) %}<a href="tel:{{ callback.phone }}"><i class="fa fa-phone" aria-hidden="true"></i> {{ callback.phone }}</a>{% endif %}</td>
               <td>{% if (callback.url) %}<a href="{{ callback.url }}" class="btn btn-link" target="_blank" data-toggle="tooltip" title="{{ callback.url }}">{{ text_go_to }} <i class="fa fa-external-link"></i></a>{% endif %}</td>
-              <td>{{ callback.comment }}</td>
+              <td>{{ callback.message }}</td>
               <td>{{ callback.status_name }}</td>
               <td class="text-right">
                 <div class="btn-group" role="group">

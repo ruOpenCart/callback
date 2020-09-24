@@ -5,7 +5,7 @@ $_['modal_title']    = 'Change application';
 // Modal form
 $_['label_name']     = 'Name';
 $_['label_phone']    = 'Telephone';
-$_['label_comment']  = 'Comment';
+$_['label_message']  = 'Message';
 $_['label_email']    = 'Email';
 $_['label_status']   = 'Status';
 

@@ -5,7 +5,7 @@ $_['modal_title']    = 'Изменить заявку';
 // Modal form
 $_['label_name']     = 'Имя';
 $_['label_phone']    = 'Телефон';
-$_['label_comment']  = 'Комментарий';
+$_['label_message']  = 'Сообщение';
 $_['label_email']    = 'Эл. Почта';
 $_['label_status']   = 'Статус';
 
