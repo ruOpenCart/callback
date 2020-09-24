@@ -1,6 +1,6 @@
 $(document).ready(function() {
     let modal = $('#ocn-callback-modal');
-    let callback = $('#ocn-callback');
+    // let callback = $('#ocn-callback');
 
     $('#ocn-callback-modal').on('show.bs.modal', function (e) {
         $('#ocn-callback-show').hide(500);

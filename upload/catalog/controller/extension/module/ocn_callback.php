@@ -10,8 +10,8 @@ class ControllerExtensionModuleOCNCallback extends Controller {
 	}
 	
 	public function index() {
-		$this->document->addStyle('catalog/view/style/ocn_callback/ocn_callback.css');
-		$this->document->addScript('catalog/view/javascript/ocn_callback/ocn_callback.js');
+		$this->document->addStyle('catalog/view/style/ocn/ocn_callback.css');
+		$this->document->addScript('catalog/view/javascript/ocn/ocn_callback.js');
 		
 		$this->load->language('extension/module/ocn_callback/ocn_callback');
 		
